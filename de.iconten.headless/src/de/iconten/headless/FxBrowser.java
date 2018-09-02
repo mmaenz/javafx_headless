@@ -1,13 +1,16 @@
 package de.iconten.headless;
 
-import java.util.Observable;
-import java.util.Observer;
+import java.util.concurrent.CountDownLatch;
 
 import com.sun.glass.ui.monocle.MonocleLauncher;
 
-import de.iconten.headless.FxApplication.DataFXObject;
+import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.scene.web.WebView;
 
-public class FxBrowser implements Observer {
+public class FxBrowser {
 	private static FxBrowser instance;
 
 	public static FxBrowser getFxBrowser() {
@@ -36,24 +39,38 @@ public class FxBrowser implements Observer {
 		browser.runFxBrowser();
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		System.out.println("Main called in " + Thread.currentThread().getName());
-		if (((String) arg).equalsIgnoreCase("main")) {
-			System.out.println("Main called: " + Integer.toString(((DataFXObject) o).getWert()));
-		}
+	public String getTitleFromPage(String url) throws InterruptedException {
+		final CountDownLatch latch = new CountDownLatch(1);
+		final String title = "";
+		final Task<String> google = new Task<String>() {
+			@Override
+			public String call() {
+				final WebView view = FxApplication.getView();
+				view.getEngine().getLoadWorker().stateProperty().addListener((ChangeListener<State>) (observable, oldValue, newValue) -> {
+					if (newValue != Worker.State.SUCCEEDED) {
+						return;
+					}
+					set(view.getEngine().getTitle());
+					return;
+				});
+				view.getEngine().load(url);
+				return null;
+			}
+		};
+
+		google.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, t -> {
+			final String result = google.getValue();
+		});
+
+		latch.wait();
+		return title;
 	}
 
 	public void runFxBrowser() throws Exception {
-		FxApplication.getDataFXObject().addObserver(this);
 		while (!FxApplication.isInitDone()) {
 			Thread.sleep(100);
 		}
-		FxApplication.getDataFXObject().loadPage("https://www.google.de");
-		Thread.sleep(5000);
-		FxApplication.getDataFXObject().loadPage("https://www.github.com");
-		Thread.sleep(5000);
-		FxApplication.getDataFXObject().loadPage("https://stackoverflow.com");
+		String test = getTitleFromPage("https://www.google.de");
+		test = test;
 	}
-
 }
