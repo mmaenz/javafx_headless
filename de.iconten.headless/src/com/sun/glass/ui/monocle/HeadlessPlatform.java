@@ -25,31 +25,16 @@
 
 package com.sun.glass.ui.monocle;
 
-import com.sun.glass.ui.monocle.HeadlessScreen;
-import com.sun.glass.ui.monocle.InputDeviceRegistry;
-import com.sun.glass.ui.monocle.NativeCursor;
-import com.sun.glass.ui.monocle.NativePlatform;
-import com.sun.glass.ui.monocle.NativeScreen;
-import com.sun.glass.ui.monocle.NullCursor;
-
 public class HeadlessPlatform extends NativePlatform {
 
-    @Override
-    protected InputDeviceRegistry createInputDeviceRegistry() {
-        // use of a LinuxInputDeviceRegistry lets us simulate
-        // Linux input devices on any system
-//        return new LinuxInputDeviceRegistry(true);
-      return null;
-    }
+	@Override
+	protected MonocleCursor createCursor() {
+		return getCursor();
+	}
 
-    @Override
-    protected NativeCursor createCursor() {
-        return new NullCursor();
-    }
-
-    @Override
-    protected NativeScreen createScreen() {
-        return new HeadlessScreen();
-    }
+	@Override
+	protected NativeScreen createScreen() {
+		return new HeadlessScreen();
+	}
 
 }

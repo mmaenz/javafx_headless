@@ -4,6 +4,8 @@ import java.util.concurrent.CountDownLatch;
 
 import com.sun.glass.ui.monocle.MonocleLauncher;
 
+//import com.sun.glass.ui.monocle.MonocleLauncher;
+
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -88,7 +90,10 @@ public class FxBrowser {
 		while (!FxApplication.isInitDone()) {
 			Thread.sleep(100);
 		}
-		final String test = getTitleFromPage("https://www.google.de");
-		System.out.println(test);
+
+		System.out.println(getTitleFromPage("https://www.github.com"));
+		System.out.println(getTitleFromPage("https://www.google.de"));
+		System.out.println(getTitleFromPage("https://www.yahoo.com"));
+		System.out.println(getTitleFromPage("https://www.stackoverflow.com"));
 	}
 }

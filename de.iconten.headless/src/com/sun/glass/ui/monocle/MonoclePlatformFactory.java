@@ -30,50 +30,39 @@ import com.sun.glass.ui.Menu;
 import com.sun.glass.ui.MenuBar;
 import com.sun.glass.ui.MenuItem;
 import com.sun.glass.ui.PlatformFactory;
-import com.sun.glass.ui.Window;
-import com.sun.glass.ui.accessible.AccessibleBaseProvider;
-import com.sun.glass.ui.accessible.AccessibleRoot;
 import com.sun.glass.ui.delegate.ClipboardDelegate;
 import com.sun.glass.ui.delegate.MenuBarDelegate;
 import com.sun.glass.ui.delegate.MenuDelegate;
 import com.sun.glass.ui.delegate.MenuItemDelegate;
 
 public class MonoclePlatformFactory extends PlatformFactory {
-    @Override
-    public Application createApplication() {
-        return new MonocleApplication();
-    }
+	@Override
+	public Application createApplication() {
+		return new MonocleApplication();
+	}
 
-    @Override
-    public MenuBarDelegate createMenuBarDelegate(MenuBar menubar) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public MenuBarDelegate createMenuBarDelegate(MenuBar menubar) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public MenuDelegate createMenuDelegate(Menu menu) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public MenuDelegate createMenuDelegate(Menu menu) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public MenuItemDelegate createMenuItemDelegate(MenuItem menuItem) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public MenuItemDelegate createMenuItemDelegate(MenuItem menuItem) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public ClipboardDelegate createClipboardDelegate() {
-        return new MonocleClipboardDelegate();
-    }
-
-    //@Override
-    public AccessibleRoot createAccessibleRoot(Object node, Window window) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    //@Override
-    public AccessibleBaseProvider createAccessibleProvider(Object node) {
-      // TODO Auto-generated method stub
-      return null;
-    }
+	@Override
+	public ClipboardDelegate createClipboardDelegate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

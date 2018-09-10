@@ -70,43 +70,6 @@ public final class MonocleApplication extends Application {
 	private final Runnable renderEndNotifier = () -> platform.getScreen().swapBuffers();
 
 	MonocleApplication() {
-		//for (final InputDevice device : platform.getInputDeviceRegistry().getInputDevices()) {
-		//	updateDeviceFlags(device, true);
-		//}
-
-		//platform.getInputDeviceRegistry().getInputDevices().addListener((SetChangeListener<? super InputDevice>) change -> {
-		//	if (change.wasAdded()) {
-		//		final InputDevice device = change.getElementAdded();
-		//		updateDeviceFlags(device, true);
-		//	} else if (change.wasRemoved()) {
-		//		final InputDevice device = change.getElementRemoved();
-		//		updateDeviceFlags(device, false);
-		//	}
-		//});
-	}
-
-	private void updateDeviceFlags(InputDevice device, boolean added) {
-		final int modifier = added ? 1 : -1;
-		if (device.isTouch()) {
-			deviceFlags[DEVICE_TOUCH] += modifier;
-		}
-		if (device.isMultiTouch()) {
-			deviceFlags[DEVICE_MULTITOUCH] += modifier;
-		}
-		if (device.isRelative()) {
-			deviceFlags[DEVICE_POINTER] += modifier;
-			if (deviceFlags[DEVICE_POINTER] >= 1 && added) {
-				staticCursor_setVisible(true);
-			} else if (deviceFlags[DEVICE_POINTER] < 1 && !added) {
-				staticCursor_setVisible(false);
-			}
-		}
-		if (device.isFullKeyboard()) {
-			deviceFlags[DEVICE_PC_KEYBOARD] += modifier;
-		}
-		if (device.is5Way()) {
-			deviceFlags[DEVICE_5WAY] += modifier;
-		}
 	}
 
 	@Override
@@ -172,14 +135,13 @@ public final class MonocleApplication extends Application {
 
 	@Override
 	protected void staticCursor_setVisible(boolean visible) {
-		final NativeCursor cursor = NativePlatformFactory.getNativePlatform().getCursor();
-		cursor.setVisibility(deviceFlags[DEVICE_POINTER] >= 1 ? visible : false);
+		// Only needed by superclass
 	}
 
 	@Override
 	protected Size staticCursor_getBestSize(int width, int height) {
-		final NativeCursor cursor = NativePlatformFactory.getNativePlatform().getCursor();
-		return cursor.getBestSize();
+		// Only needed by superclass
+		return new Size(10, 10);
 	}
 
 	@Override
@@ -206,11 +168,6 @@ public final class MonocleApplication extends Application {
 	@Override
 	protected int staticPixels_getNativeFormat() {
 		return platform.getScreen().getNativeFormat();
-	}
-
-	@Override
-	public Robot createRobot() {
-		return new MonocleRobot();
 	}
 
 	@Override
@@ -249,20 +206,10 @@ public final class MonocleApplication extends Application {
 					screen = (Screen) c.newInstance(1l, // dummy native pointer;
 							ns.getDepth(), 0, 0, ns.getWidth(), ns.getHeight(), 0, 0, ns.getWidth(), ns.getHeight(), 0, 0, ns.getWidth(),
 							ns.getHeight(), ns.getDPI(), ns.getDPI(), ns.getScale(), ns.getScale(), ns.getScale(), ns.getScale());
-					// Move the cursor to the middle of the screen
-					final MouseState mouseState = new MouseState();
-					mouseState.setX(ns.getWidth() / 2);
-					mouseState.setY(ns.getHeight() / 2);
-					MouseInput.getInstance().setState(mouseState, false);
 				} else {
 					screen = (Screen) c.newInstance(1l, // dummy native pointer;
 							ns.getDepth(), 0, 0, ns.getWidth(), ns.getHeight(), 0, 0, ns.getWidth(), ns.getHeight(), ns.getDPI(), ns.getDPI(),
 							ns.getScale());
-					// Move the cursor to the middle of the screen
-					final MouseState mouseState = new MouseState();
-					mouseState.setX(ns.getWidth() / 2);
-					mouseState.setY(ns.getHeight() / 2);
-					MouseInput.getInstance().setState(mouseState, false);
 				}
 			}
 		} catch (final Throwable t) {
@@ -389,10 +336,16 @@ public final class MonocleApplication extends Application {
 		_leaveNestedEventLoop(null);
 	}
 
-	//@Override
+	@Override
+	public Robot createRobot() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	protected int _getKeyCodeForChar(char c) {
-		return KeyInput.getInstance().getKeyCodeForChar(c);
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
