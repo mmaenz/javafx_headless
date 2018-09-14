@@ -15,7 +15,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.iconten.headless.FxBrowser</mainClass>
+							<mainClass>de.iconten.ict1.svg.fxbrowser.FxBrowser</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

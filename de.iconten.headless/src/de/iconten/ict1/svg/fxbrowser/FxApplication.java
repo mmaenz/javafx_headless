@@ -1,10 +1,11 @@
-package de.iconten.headless;
+package de.iconten.ict1.svg.fxbrowser;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import com.sun.glass.ui.Screen;
 import com.sun.glass.ui.monocle.NativePlatform;
@@ -13,7 +14,9 @@ import com.sun.javafx.webkit.Accessor;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -30,23 +33,49 @@ public class FxApplication extends Application {
 	private static final Object lock = new Object();
 	private static Stage myStage;
 	private static WebView myView;
+	private static StackPane myRoot;
 	private int width;
 	private int height;
 	private boolean headless;
 	private static boolean initDone = false;
-
-	public static void setInitDone() {
-		initDone = true;
-	}
+	private static boolean shutdownRequested = false;
 
 	public static boolean isInitDone() {
 		return initDone;
 	}
 
+	public static boolean isShutDown() {
+		return shutdownRequested;
+	}
+
+	public static void setInitDone(boolean state) {
+		initDone = state;
+	}
+
 	public static FxApplication getFxApplication() {
-		while (fxApplication == null) {
-		}
 		return fxApplication;
+	}
+
+	public static void resize(int sceneWidth, int sceneHeight) throws Exception {
+		final CountDownLatch latch = new CountDownLatch(1);
+		final Task<Integer> resizeStage = new Task<Integer>() {
+			@Override
+			protected Integer call() throws Exception {
+				try {
+					getStage().setScene(null);
+					myRoot.getScene().setRoot(new Region());
+					getStage().setScene(new Scene(myRoot, sceneWidth, sceneHeight));
+					getStage().sizeToScene();
+					latch.countDown();
+				} catch (final Exception ex) {
+					System.out.println(ex.getMessage());
+				}
+				return null;
+			}
+		};
+
+		Platform.runLater(resizeStage);
+		latch.await();
 	}
 
 	/**
@@ -123,7 +152,7 @@ public class FxApplication extends Application {
 		if (stage == null) {
 			stage = new Stage();
 		}
-		Platform.setImplicitExit(false);
+		Platform.setImplicitExit(true);
 		final WebView view = new WebView();
 		view.setCache(false);
 		final StackPane root = new StackPane();
@@ -144,12 +173,18 @@ public class FxApplication extends Application {
 		stage.sizeToScene();
 		stage.show();
 		synchronized (lock) {
+			myRoot = root;
 			myStage = stage;
 			myView = view;
 			lock.notifyAll();
 		}
 		myStage.setOnCloseRequest(e -> Platform.exit());
 		fxApplication = this;
-		setInitDone();
+		initDone = true;
+	}
+
+	@Override
+	public void stop() {
+		shutdownRequested = true;
 	}
 }
